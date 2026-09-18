@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $row
  * @property int $number
  * @property string $status
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat query()
