@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin Eloquent
  */
-#[Fillable(['name', 'city', 'layout'])]
+#[Fillable(['name', 'city', 'layout', 'seats_per_row', 'rows'])]
 class Venue extends Model
 {
     use HasFactory;

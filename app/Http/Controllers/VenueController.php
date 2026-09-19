@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreVenueRequest;
 use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -21,26 +22,13 @@ class VenueController extends Controller
         return Inertia::render('venues/create');
     }
 
-    public function store(Request $request)
+    public function store(StoreVenueRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'city' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        $newVenue = [
-            'name' => $validated['name'],
-            'city' => $validated['city'],
-            'layout' => [
-                'sections' => ['A', 'B', 'C'],
-                'seats_per_row' => 10,
-                'rows_per_section' => 5,
-            ],
-        ];
+        Venue::create($validated);
 
-        Venue::create($newVenue);
-
-        return Redirect::route('venues.index');
+        return Redirect::route('venues.index')->with('success', 'Venue created.');
     }
 
     public function show(Venue $venue) {}
@@ -50,24 +38,11 @@ class VenueController extends Controller
         return Inertia::render('venues/edit', compact('venue'));
     }
 
-    public function update(Request $request, Venue $venue)
+    public function update(StoreVenueRequest $request, Venue $venue)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'city' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        $updatedVenue = [
-            'name' => $validated['name'],
-            'city' => $validated['city'],
-            'layout' => [
-                'sections' => ['A', 'B', 'C'],
-                'seats_per_row' => 10,
-                'rows_per_section' => 5,
-            ],
-        ];
-
-        $venue->update($updatedVenue);
+        $venue->update($validated);
 
         return Redirect::route('venues.index');
     }

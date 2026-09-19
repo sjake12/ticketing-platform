@@ -31,7 +31,7 @@ export default function Events({events}: Props) {
 
     return (
         <>
-            <Head title={'Venues'}/>
+            <Head title={'Events'}/>
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <Button className={'w-40'} onClick={() => router.visit('/events/create')}>Create</Button>
                 <Table>
