@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,11 +24,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat whereRow($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat whereSection($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat whereStatus($value)
+ *
  * @mixin \Eloquent
  */
+#[Fillable(['section', 'row', 'number', 'status'])]
 class Seat extends Model
 {
     use HasFactory;
+
+    protected $table = 'seats';
 
     public function event(): BelongsTo
     {

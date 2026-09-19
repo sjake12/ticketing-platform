@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin \Eloquent
  */
 
-#[Fillable(['venue_id', 'title', 'category', 'starts_at', 'base_price'])]
+#[Fillable(['venue_id', 'title', 'category', 'starts_at', 'base_price', 'section', 'row', 'number', 'status'])]
 class Event extends Model
 {
     use HasFactory;
