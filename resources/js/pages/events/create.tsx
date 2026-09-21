@@ -30,7 +30,7 @@ interface Venue {
 }
 
 export default function CreateEvent({ venues }: PageProps) {
-    const { data, setData, post, processing, reset } = useForm<EventFormData>({
+    const { data, setData, post, reset } = useForm<EventFormData>({
         venue_id: 0,
         title: '',
         category: '',

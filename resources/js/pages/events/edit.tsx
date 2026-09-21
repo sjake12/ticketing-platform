@@ -40,7 +40,7 @@ interface PageProps {
 }
 
 export default function EditEvent({ event, venues }: PageProps) {
-    const { data, setData, patch, processing } = useForm<EventForm>({
+    const { data, setData, patch } = useForm<EventForm>({
         venue_id: event.venue_id,
         title: event.title,
         category: event.category,
