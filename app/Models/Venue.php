@@ -33,9 +33,6 @@ class Venue extends Model
         'layout' => 'array',
     ];
 
-    /**
-     * @return HasMany
-     */
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
