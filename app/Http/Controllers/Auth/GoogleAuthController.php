@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Socialite;
 use Laravel\Socialite\Two\GoogleProvider;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class GoogleAuthController extends Controller
 {
@@ -47,7 +47,7 @@ class GoogleAuthController extends Controller
                     'join_date' => now(),
                 ]);
             } else {
-                if (! $user->getGoogleId()) {
+                if (! $user->google_id) {
                     $user->update([
                         'google_id' => $googleUser->getId(),
                         'provider' => 'google',

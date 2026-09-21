@@ -33,6 +33,7 @@ class EventController extends Controller
 
         $event = Event::create($validated);
 
+        /** @var Venue $venue */
         $venue = Venue::findOrFail($request->venue_id);
 
         $seatGeneratorService->generateForEvent($event, $venue);
@@ -40,7 +41,7 @@ class EventController extends Controller
         return Redirect::route('events.index')->with('success', 'Event created.');
     }
 
-    public function show($id) {}
+    public function show(string $id): void {}
 
     public function edit(string $id): Response
     {

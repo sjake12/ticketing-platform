@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Database\Factories\VenueFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,8 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $name
  * @property string $city
- * @property array $layout
- *
+ * @property array<mixed> $layout
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue query()
@@ -21,18 +22,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereLayout($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereName($value)
- *
+ * @property \Carbon\CarbonImmutable|null $created_at
+ * @property \Carbon\CarbonImmutable|null $updated_at
+ * @property-read Collection<int, \App\Models\Event> $events
+ * @property-read int|null $events_count
+ * @method static \Database\Factories\VenueFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereUpdatedAt($value)
  * @mixin Eloquent
  */
 #[Fillable(['name', 'city', 'layout', 'seats_per_row', 'rows'])]
 class Venue extends Model
 {
+    /** @use HasFactory<VenueFactory> */
     use HasFactory;
 
     protected $casts = [
         'layout' => 'array',
     ];
 
+    /**
+     * @return HasMany<Event, $this>
+     */
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);

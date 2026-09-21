@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
+use Database\Factories\SeatFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,15 +28,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat whereSection($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat whereStatus($value)
  *
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Event|null $event
+ *
+ * @method static \Database\Factories\SeatFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 #[Fillable(['section', 'row', 'number', 'status'])]
 class Seat extends Model
 {
+    /** @use HasFactory<SeatFactory> */
     use HasFactory;
 
     protected $table = 'seats';
 
+    /**
+     * @return BelongsTo<Event, $this>
+     */
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);

@@ -32,7 +32,7 @@ class VenueController extends Controller
         return Redirect::route('venues.index')->with('success', 'Venue created.');
     }
 
-    public function show(Venue $venue) {}
+    public function show(Venue $venue): void {}
 
     public function edit(Venue $venue): Response
     {
