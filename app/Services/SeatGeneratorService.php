@@ -11,7 +11,7 @@ class SeatGeneratorService
     /**
      * Create a new class instance.
      */
-    public function generateForEvent(Event $event, Venue $venue)
+    public function generateForEvent(Event $event, Venue $venue): void
     {
         $seats = [];
         $now = now();

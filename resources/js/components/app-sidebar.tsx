@@ -15,11 +15,23 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import { index as venues }  from '@/routes/venues';
+import { index as events }  from '@/routes/events';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Venues',
+        href: venues(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Events',
+        href: events(),
         icon: LayoutGrid,
     },
 ];
