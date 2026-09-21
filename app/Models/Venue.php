@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use Database\Factories\VenueFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $city
  * @property array<mixed> $layout
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue query()
@@ -22,13 +24,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereLayout($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereName($value)
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read Collection<int, \App\Models\Event> $events
+ *
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Collection<int, Event> $events
  * @property-read int|null $events_count
+ *
  * @method static \Database\Factories\VenueFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 #[Fillable(['name', 'city', 'layout', 'seats_per_row', 'rows'])]
