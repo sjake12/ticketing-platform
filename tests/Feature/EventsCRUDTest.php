@@ -4,6 +4,7 @@ use App\Models\Seat;
 use App\Models\User;
 use App\Models\Venue;
 use Carbon\Carbon;
+
 use function Pest\Laravel\actingAs;
 
 test('add seats automatically when event is added', function () {

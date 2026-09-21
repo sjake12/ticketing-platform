@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreVenueRequest extends FormRequest
 {
-
     public function rules(): array
     {
         return [

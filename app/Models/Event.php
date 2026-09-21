@@ -25,9 +25,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event whereStartsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Event whereVenueId($value)
+ *
  * @mixin \Eloquent
  */
-
 #[Fillable(['venue_id', 'title', 'category', 'starts_at', 'base_price', 'section', 'row', 'number', 'status'])]
 class Event extends Model
 {

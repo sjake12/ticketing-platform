@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\VenueController;
-use App\Http\Controllers\EventController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\VenueController;
+use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
 
