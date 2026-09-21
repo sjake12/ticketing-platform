@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $name
  * @property string $city
- * @property string|null $layout
+ * @property array $layout
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Venue newQuery()
@@ -33,6 +33,9 @@ class Venue extends Model
         'layout' => 'array',
     ];
 
+    /**
+     * @return HasMany
+     */
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);

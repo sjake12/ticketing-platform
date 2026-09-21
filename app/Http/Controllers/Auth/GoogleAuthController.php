@@ -4,47 +4,52 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Socialite;
+use Laravel\Socialite\Two\GoogleProvider;
 
 class GoogleAuthController extends Controller
 {
-    public function redirect()
+    public function redirect(): RedirectResponse
     {
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback()
+    public function callback(): RedirectResponse
     {
-        try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
+        /** @var GoogleProvider $googleDriver */
+        $googleDriver = Socialite::driver('google');
 
-            if (empty($googleUser->email)) {
+        try {
+            $googleUser = $googleDriver->stateless()->user();
+
+            if (empty($googleUser->getEmail())) {
                 return redirect()->route('login')
                     ->withErrors('No email returned from Google account.');
 
             }
 
-            $user = User::where('google_id', $googleUser->id)
-                ->where('email', $googleUser->email)
+            $user = User::where('google_id', $googleUser->getId())
+                ->where('email', $googleUser->getEmail())
                 ->first();
 
             if (! $user) {
                 $user = User::create([
-                    'name' => $googleUser->name,
-                    'email' => $googleUser->email,
-                    'google_id' => $googleUser->id,
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'google_id' => $googleUser->getId(),
                     'provider' => 'google',
-                    'avatar' => $googleUser->avatar,
+                    'avatar' => $googleUser->getAvatar(),
                     'password' => bcrypt(Str::random(24)),
                     'status' => 'Active',
                     'join_date' => now(),
                 ]);
             } else {
-                if (! $user->google_id) {
+                if (! $user->getGoogleId()) {
                     $user->update([
-                        'google_id' => $googleUser->id,
+                        'google_id' => $googleUser->getId(),
                         'provider' => 'google',
                     ]);
                 }

@@ -33,11 +33,13 @@ class Event extends Model
 {
     use HasFactory;
 
+    /** @return BelongsTo<Venue, $this> */
     public function venue(): BelongsTo
     {
         return $this->belongsTo(Venue::class);
     }
 
+    /** @return HasMany<Seat, $this> */
     public function seats(): HasMany
     {
         return $this->hasMany(Seat::class);
