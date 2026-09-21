@@ -1,8 +1,15 @@
-import {Head, router} from "@inertiajs/react";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Button} from "@/components/ui/button";
-import {SquarePen, Trash} from 'lucide-react';
-import {VenuesPageProps} from "@/types";
+import { Head, router } from '@inertiajs/react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { SquarePen, Trash } from 'lucide-react';
+import { VenuesPageProps } from '@/types';
 
 interface Venues {
     id: number;
@@ -10,18 +17,23 @@ interface Venues {
     city: string;
 }
 
-export default function Venues({venues}: VenuesPageProps){
+export default function Venues({ venues }: VenuesPageProps) {
     const handleDelete = (id: number) => {
-        if (window.confirm("Are you sure you want to delete this venue?")){
-            router.delete(`/venues/${id}`)
+        if (window.confirm('Are you sure you want to delete this venue?')) {
+            router.delete(`/venues/${id}`);
         }
-    }
+    };
 
     return (
         <>
-            <Head title={'Venues'}/>
+            <Head title={'Venues'} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Button className={'w-40'} onClick={() => router.visit('/venues/create')}>Create</Button>
+                <Button
+                    className={'w-40'}
+                    onClick={() => router.visit('/venues/create')}
+                >
+                    Create
+                </Button>
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -32,19 +44,28 @@ export default function Venues({venues}: VenuesPageProps){
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {venues.map( (venue: Venues) => (
+                        {venues.map((venue: Venues) => (
                             <TableRow key={venue.id}>
                                 <TableCell>{venue.id}</TableCell>
                                 <TableCell>{venue.name}</TableCell>
                                 <TableCell>{venue.city}</TableCell>
                                 <TableCell>
-                                    <Button size={'icon'} onClick={() => router.visit(`/venues/${venue.id}/edit`)}><SquarePen/></Button>
+                                    <Button
+                                        size={'icon'}
+                                        onClick={() =>
+                                            router.visit(
+                                                `/venues/${venue.id}/edit`,
+                                            )
+                                        }
+                                    >
+                                        <SquarePen />
+                                    </Button>
                                     <Button
                                         size={'icon'}
                                         variant={'destructive'}
                                         onClick={() => handleDelete(venue.id)}
                                     >
-                                        <Trash/>
+                                        <Trash />
                                     </Button>
                                 </TableCell>
                             </TableRow>
@@ -53,5 +74,5 @@ export default function Venues({venues}: VenuesPageProps){
                 </Table>
             </div>
         </>
-    )
+    );
 }

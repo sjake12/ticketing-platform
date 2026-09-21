@@ -1,6 +1,6 @@
 import { useForm } from '@inertiajs/react';
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 type Section = {
     name: string;
@@ -17,7 +17,11 @@ export default function CreateVenue() {
         },
     });
 
-    const updateSection = (index: number, field: keyof Section, value: string | number) => {
+    const updateSection = (
+        index: number,
+        field: keyof Section,
+        value: string | number,
+    ) => {
         const sections = [...data.layout.sections];
         sections[index] = { ...sections[index], [field]: value };
         setData('layout', { sections });
@@ -25,7 +29,10 @@ export default function CreateVenue() {
 
     const addSection = () => {
         setData('layout', {
-            sections: [...data.layout.sections, { name: '', rows: 5, seats_per_row: 10 }],
+            sections: [
+                ...data.layout.sections,
+                { name: '', rows: 5, seats_per_row: 10 },
+            ],
         });
     };
 
@@ -37,7 +44,7 @@ export default function CreateVenue() {
 
     const totalSeats = data.layout.sections.reduce(
         (sum, s) => sum + s.rows * s.seats_per_row,
-        0
+        0,
     );
 
     const submit = (e: React.FormEvent) => {
@@ -46,34 +53,50 @@ export default function CreateVenue() {
     };
 
     return (
-        <form onSubmit={submit} className="space-y-6 w-[600px] flex flex-col p-4">
+        <form
+            onSubmit={submit}
+            className="flex w-[600px] flex-col space-y-6 p-4"
+        >
             <div>
                 <label>Venue Name</label>
-                <Input value={data.name} onChange={(e) => setData('name', e.target.value)} />
+                <Input
+                    value={data.name}
+                    onChange={(e) => setData('name', e.target.value)}
+                />
                 {errors.name && <p className="text-red-600">{errors.name}</p>}
             </div>
 
             <div>
                 <label>City</label>
-                <Input value={data.city} onChange={(e) => setData('city', e.target.value)} />
+                <Input
+                    value={data.city}
+                    onChange={(e) => setData('city', e.target.value)}
+                />
                 {errors.city && <p className="text-red-600">{errors.city}</p>}
             </div>
 
             <div>
                 <h3>Seating Sections</h3>
                 {data.layout.sections.map((section, i) => (
-                    <div key={i} className="flex gap-2 items-center border p-3 rounded mb-2">
+                    <div
+                        key={i}
+                        className="mb-2 flex items-center gap-2 rounded border p-3"
+                    >
                         <Input
                             placeholder="Section name (e.g. VIP, A)"
                             value={section.name}
-                            onChange={(e) => updateSection(i, 'name', e.target.value)}
+                            onChange={(e) =>
+                                updateSection(i, 'name', e.target.value)
+                            }
                             className="w-32"
                         />
                         <Input
                             type="number"
                             placeholder="Rows"
                             value={section.rows}
-                            onChange={(e) => updateSection(i, 'rows', Number(e.target.value))}
+                            onChange={(e) =>
+                                updateSection(i, 'rows', Number(e.target.value))
+                            }
                             className="w-20"
                         />
                         <span>rows ×</span>
@@ -81,29 +104,45 @@ export default function CreateVenue() {
                             type="number"
                             placeholder="Seats per row"
                             value={section.seats_per_row}
-                            onChange={(e) => updateSection(i, 'seats_per_row', Number(e.target.value))}
+                            onChange={(e) =>
+                                updateSection(
+                                    i,
+                                    'seats_per_row',
+                                    Number(e.target.value),
+                                )
+                            }
                             className="w-20"
                         />
                         <span>seats</span>
                         <span className="text-gray-500">
-              = {section.rows * section.seats_per_row} seats
-            </span>
+                            = {section.rows * section.seats_per_row} seats
+                        </span>
                         {data.layout.sections.length > 1 && (
-                            <button type="button" onClick={() => removeSection(i)} className="text-red-600">
+                            <button
+                                type="button"
+                                onClick={() => removeSection(i)}
+                                className="text-red-600"
+                            >
                                 Remove
                             </button>
                         )}
                         {errors[`layout.sections.${i}.name`] && (
-                            <p className="text-red-600 text-sm">{errors[`layout.sections.${i}.name`]}</p>
+                            <p className="text-sm text-red-600">
+                                {errors[`layout.sections.${i}.name`]}
+                            </p>
                         )}
                     </div>
                 ))}
-                <Button type="button" onClick={addSection}>+ Add Section</Button>
+                <Button type="button" onClick={addSection}>
+                    + Add Section
+                </Button>
             </div>
 
             <p className="font-semibold">Total seats: {totalSeats}</p>
 
-            <Button type="submit" disabled={processing}>Create Venue</Button>
+            <Button type="submit" disabled={processing}>
+                Create Venue
+            </Button>
         </form>
     );
 }

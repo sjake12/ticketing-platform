@@ -1,8 +1,15 @@
-import {Head, router, useForm} from "@inertiajs/react";
-import {Button} from "@/components/ui/button";
-import {Field, FieldLabel} from "@/components/ui/field";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Input} from "@/components/ui/input";
+import { Head, router, useForm } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import React, { SubmitEvent } from 'react';
 
 interface EventFormData {
@@ -22,14 +29,13 @@ interface Venue {
     name: string;
 }
 
-export default function CreateEvent({venues}: PageProps){
-
-    const { data, setData, post, processing, reset} = useForm<EventFormData>({
-       venue_id: 0,
-       title: '',
-       category: '',
-       starts_at: '',
-       base_price: 0,
+export default function CreateEvent({ venues }: PageProps) {
+    const { data, setData, post, processing, reset } = useForm<EventFormData>({
+        venue_id: 0,
+        title: '',
+        category: '',
+        starts_at: '',
+        base_price: 0,
     });
 
     const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
@@ -40,28 +46,44 @@ export default function CreateEvent({venues}: PageProps){
         });
     };
 
-
     return (
         <>
-            <Head title={'Venues'}/>
+            <Head title={'Venues'} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Button className={'w-40'} onClick={() => router.visit('/events')}>Back to Events</Button>
-                <form className="w-[500px] flex flex-col gap-4" onSubmit={handleSubmit}>
+                <Button
+                    className={'w-40'}
+                    onClick={() => router.visit('/events')}
+                >
+                    Back to Events
+                </Button>
+                <form
+                    className="flex w-[500px] flex-col gap-4"
+                    onSubmit={handleSubmit}
+                >
                     <Field>
                         <FieldLabel htmlFor="event-venue">Venue</FieldLabel>
                         <Select
-                            value={data.venue_id ? data.venue_id.toString() : ''}
-                            onValueChange={(value) => setData('venue_id', Number(value))}
+                            value={
+                                data.venue_id ? data.venue_id.toString() : ''
+                            }
+                            onValueChange={(value) =>
+                                setData('venue_id', Number(value))
+                            }
                         >
                             <SelectTrigger>
-                                <SelectValue placeholder="Select Venue"/>
+                                <SelectValue placeholder="Select Venue" />
                             </SelectTrigger>
                             <SelectContent>
-                            <SelectGroup>
-                                {venues.map((venue) => (
-                                    <SelectItem key={venue.id} value={`${venue.id}`}>{venue.name}</SelectItem>
-                                ))}
-                            </SelectGroup>
+                                <SelectGroup>
+                                    {venues.map((venue) => (
+                                        <SelectItem
+                                            key={venue.id}
+                                            value={`${venue.id}`}
+                                        >
+                                            {venue.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
                     </Field>
@@ -81,7 +103,9 @@ export default function CreateEvent({venues}: PageProps){
                             id="category"
                             type="text"
                             value={data.category}
-                            onChange={(e) => setData('category', e.target.value)}
+                            onChange={(e) =>
+                                setData('category', e.target.value)
+                            }
                             placeholder="Category"
                         />
                     </Field>
@@ -91,7 +115,12 @@ export default function CreateEvent({venues}: PageProps){
                             id="starts_at"
                             type="datetime-local"
                             value={data.starts_at}
-                            onChange={(e) => setData('starts_at', e.target.value.replace('T', ' '))}
+                            onChange={(e) =>
+                                setData(
+                                    'starts_at',
+                                    e.target.value.replace('T', ' '),
+                                )
+                            }
                             placeholder="Time and Date"
                         />
                     </Field>
@@ -101,13 +130,15 @@ export default function CreateEvent({venues}: PageProps){
                             id="base_price"
                             type="number"
                             value={data.base_price}
-                            step={"0.01"}
-                            onChange={(e) => setData('base_price', e.target.valueAsNumber)}
+                            step={'0.01'}
+                            onChange={(e) =>
+                                setData('base_price', e.target.valueAsNumber)
+                            }
                         />
                     </Field>
                     <Button type="submit">Save Event</Button>
                 </form>
             </div>
         </>
-    )
+    );
 }

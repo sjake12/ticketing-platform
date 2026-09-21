@@ -15,8 +15,8 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
-import { index as venues }  from '@/routes/venues';
-import { index as events }  from '@/routes/events';
+import { index as venues } from '@/routes/venues';
+import { index as events } from '@/routes/events';
 
 const mainNavItems: NavItem[] = [
     {

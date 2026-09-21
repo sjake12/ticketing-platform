@@ -1,7 +1,7 @@
-import {Head, useForm, router} from '@inertiajs/react';
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {VenueFormData} from "@/types";
+import { Head, useForm, router } from '@inertiajs/react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { VenueFormData } from '@/types';
 import React, { SubmitEvent } from 'react';
 
 interface Props {
@@ -12,10 +12,10 @@ interface Props {
     };
 }
 
-export default function EditVenue({venue}: Props) {
+export default function EditVenue({ venue }: Props) {
     console.log(venue);
 
-    const { data, setData, patch, processing, reset} = useForm<VenueFormData>({
+    const { data, setData, patch, processing, reset } = useForm<VenueFormData>({
         name: venue.name,
         city: venue.city,
     });
@@ -26,16 +26,24 @@ export default function EditVenue({venue}: Props) {
         patch(`/venues/${venue.id}`, {
             onSuccess: () => reset(),
         });
-    }
+    };
 
     return (
         <>
-            <Head title={'Edit Venue'}/>
+            <Head title={'Edit Venue'} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                    <Button className={'w-40'} onClick={() => router.visit('/venues')}>Back to Venues</Button>
+                    <Button
+                        className={'w-40'}
+                        onClick={() => router.visit('/venues')}
+                    >
+                        Back to Venues
+                    </Button>
                     <h1>Edit Venue</h1>
-                    <form className={'w-[500px] flex flex-col gap-4'} onSubmit={handleSubmit}>
+                    <form
+                        className={'flex w-[500px] flex-col gap-4'}
+                        onSubmit={handleSubmit}
+                    >
                         <Input
                             id={'name'}
                             type={'text'}
@@ -50,10 +58,12 @@ export default function EditVenue({venue}: Props) {
                             onChange={(e) => setData('city', e.target.value)}
                             //error handling will be implemented later
                         />
-                        <Button type="submit" disabled={processing}>{processing ? 'Submitting' : 'Update'}</Button>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Submitting' : 'Update'}
+                        </Button>
                     </form>
                 </div>
             </div>
         </>
-    )
+    );
 }
