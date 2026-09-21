@@ -1,10 +1,20 @@
 <?php
 
+use App\Models\Seat;
+use App\Models\User;
 use App\Models\Venue;
 use Carbon\Carbon;
-use App\Models\Seat;
+use function Pest\Laravel\actingAs;
 
 test('add seats automatically when event is added', function () {
+
+    $admin = User::factory()->create([
+        'name' => 'Admin',
+        'email' => 'admin@admin.com',
+        'password' => bcrypt('secret'),
+        'role' => 'admin',
+    ]);
+
     $venue = Venue::create([
         'name' => 'MOA Arena',
         'city' => 'Pasig City',
@@ -25,10 +35,10 @@ test('add seats automatically when event is added', function () {
         'base_price' => 120.22,
     ];
 
-    $response = $this->post('/events', $event);
-
-    $response->assertValid();
-    $response->assertRedirect('/events');
+    actingAs($admin)
+        ->post('/events', $event)
+        ->assertValid()
+        ->assertRedirect('/events');
 
     expect(Seat::count())->toBe(150);
 });

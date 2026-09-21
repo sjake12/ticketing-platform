@@ -1,14 +1,32 @@
 <?php
 
+use App\Models\User;
 use App\Models\Venue;
 
-test('enter venues page', function () {
-    $response = $this->get('/venues');
+use function Pest\Laravel\actingAs;
 
-    $response->assertStatus(200);
+test('enter venues page', function () {
+    $admin = User::factory()->create([
+        'name' => 'Admin',
+        'email' => 'admin@admin.com',
+        'password' => bcrypt('secret'),
+        'role' => 'admin',
+    ]);
+
+    actingAs($admin)
+        ->get('/venues')
+        ->assertStatus(200);
 });
 
 test('create venues', function () {
+
+    $admin = User::factory()->create([
+        'name' => 'Admin',
+        'email' => 'admin@admin.com',
+        'password' => bcrypt('secret'),
+        'role' => 'admin',
+    ]);
+
     $newVenue = [
         'name' => 'Venue 1',
         'city' => 'Venue 1',
@@ -21,11 +39,10 @@ test('create venues', function () {
         ],
     ];
 
-    $response = $this->post('/venues', $newVenue);
-
-    $response->assertValid();
-
-    $response->assertRedirect('/venues');
+    actingAs($admin)
+        ->post('/venues', $newVenue)
+        ->assertValid()
+        ->assertRedirect('/venues');
 
     $venue = Venue::first();
 
@@ -37,6 +54,14 @@ test('create venues', function () {
 });
 
 test('update venues', function () {
+
+    $admin = User::factory()->create([
+        'name' => 'Admin',
+        'email' => 'admin@admin.com',
+        'password' => bcrypt('secret'),
+        'role' => 'admin',
+    ]);
+
     $venue = Venue::create([
         'name' => 'MOA Arena',
         'city' => 'Pasig City',
@@ -61,11 +86,10 @@ test('update venues', function () {
         ],
     ];
 
-    $response = $this->patch('/venues/'.$venue->id, $updatedVenue);
-
-    $response->assertValid();
-
-    $response->assertRedirect('/venues');
+    actingAs($admin)
+        ->patch('/venues/'.$venue->id, $updatedVenue)
+        ->assertValid()
+        ->assertRedirect('/venues');
 
     $venue->refresh();
 
@@ -76,6 +100,14 @@ test('update venues', function () {
 });
 
 test('delete venues', function () {
+
+    $admin = User::factory()->create([
+        'name' => 'Admin',
+        'email' => 'admin@admin.com',
+        'password' => bcrypt('secret'),
+        'role' => 'admin',
+    ]);
+
     $venue = Venue::create([
         'name' => 'MOA Arena',
         'city' => 'Pasig City',
@@ -88,8 +120,8 @@ test('delete venues', function () {
         ],
     ]);
 
-    $response = $this->delete('/venues/'.$venue->id);
-    $response->assertValid();
-
-    $response->assertRedirect('/venues');
+    actingAs($admin)
+        ->delete('/venues/'.$venue->id)
+        ->assertValid()
+        ->assertRedirect('/venues');
 });
