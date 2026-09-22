@@ -85,7 +85,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @mixin Eloquent
  */
-#[Fillable(['name', 'email', 'password', 'google_id', 'provider', 'join_date', 'last_login', 'phone_number', 'status', 'avatar'])]
+#[Fillable(['name', 'email', 'password', 'google_id', 'provider', 'join_date', 'last_login', 'phone_number', 'status', 'avatar', 'role'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
