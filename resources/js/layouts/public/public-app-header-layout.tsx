@@ -1,31 +1,30 @@
-import { Link, usePage } from "@inertiajs/react";
-import { dashboard, login, register } from "@/routes";
+import { Link, usePage } from '@inertiajs/react';
+import { login, register } from '@/routes';
 import { events, venues } from '@/routes/customer';
-import AvatarDropdown from "@/components/avatar-dropdown";
+import AvatarDropdown from '@/components/avatar-dropdown';
 
 export default function PublicLayoutHeader() {
-
     const { auth } = usePage().props;
 
     return (
-        <header className="sticky top-0 z-50 flex w-full items-center justify-between bg-[#FDFDFC] p-6 text-[#1b1b18] dark:bg-[#0a0a0a] lg:p-8 shadow">
+        <header className="sticky top-0 z-50 flex w-full items-center justify-between bg-[#FDFDFC] p-6 text-[#1b1b18] shadow lg:p-8 dark:bg-[#0a0a0a]">
             <nav className="flex items-center justify-end gap-4">
                 <Link
                     href={events()}
-                    className="hover:underline text-lg font-bold"
+                    className="text-lg font-bold hover:underline"
                 >
                     Events
                 </Link>
                 <Link
                     href={venues()}
-                    className="hover:underline text-lg font-bold"
+                    className="text-lg font-bold hover:underline"
                 >
                     Venues
                 </Link>
             </nav>
             <nav className="flex items-center justify-end gap-4">
                 {auth.user ? (
-                    <AvatarDropdown/>
+                    <AvatarDropdown />
                 ) : (
                     <>
                         <Link
@@ -44,5 +43,5 @@ export default function PublicLayoutHeader() {
                 )}
             </nav>
         </header>
-    )
+    );
 }

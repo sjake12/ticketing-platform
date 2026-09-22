@@ -2,28 +2,28 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
-    DropdownMenuItem, DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {Button} from "@/components/ui/button";
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import {
     BadgeCheckIcon,
     CreditCardIcon,
     BellIcon,
     LogOutIcon,
-} from "lucide-react";
-import { usePage } from "@inertiajs/react";
-import {UserInfo} from "@/components/user-info";
+} from 'lucide-react';
+import { usePage } from '@inertiajs/react';
+import { UserInfo } from '@/components/user-info';
 
 export default function AvatarDropdown() {
-
     const { auth } = usePage().props;
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
-                    <UserInfo user={auth.user}/>
+                    <UserInfo user={auth.user} />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -41,12 +41,12 @@ export default function AvatarDropdown() {
                         Notifications
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator/>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem>
                     <LogOutIcon />
                     Sign Out
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
-    )
+    );
 }

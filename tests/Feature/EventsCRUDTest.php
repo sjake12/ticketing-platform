@@ -37,9 +37,9 @@ test('add seats automatically when event is added', function () {
     ];
 
     actingAs($admin)
-        ->post('/events', $event)
+        ->post('/admin/events', $event)
         ->assertValid()
-        ->assertRedirect('/events');
+        ->assertRedirect('/admin/events');
 
     expect(Seat::count())->toBe(150);
 });

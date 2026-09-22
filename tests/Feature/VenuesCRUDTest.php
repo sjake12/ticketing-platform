@@ -14,7 +14,7 @@ test('enter venues page', function () {
     ]);
 
     actingAs($admin)
-        ->get('/venues')
+        ->get('/admin/venues')
         ->assertStatus(200);
 });
 
@@ -40,9 +40,9 @@ test('create venues', function () {
     ];
 
     actingAs($admin)
-        ->post('/venues', $newVenue)
+        ->post('/admin/venues', $newVenue)
         ->assertValid()
-        ->assertRedirect('/venues');
+        ->assertRedirect('/admin/venues');
 
     $venue = Venue::first();
 
@@ -87,9 +87,9 @@ test('update venues', function () {
     ];
 
     actingAs($admin)
-        ->patch('/venues/'.$venue->id, $updatedVenue)
+        ->patch('/admin/venues/'.$venue->id, $updatedVenue)
         ->assertValid()
-        ->assertRedirect('/venues');
+        ->assertRedirect('/admin/venues');
 
     $venue->refresh();
 
@@ -121,7 +121,7 @@ test('delete venues', function () {
     ]);
 
     actingAs($admin)
-        ->delete('/venues/'.$venue->id)
+        ->delete('/admin/venues/'.$venue->id)
         ->assertValid()
-        ->assertRedirect('/venues');
+        ->assertRedirect('/admin/venues');
 });

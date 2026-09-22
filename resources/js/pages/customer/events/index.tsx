@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
-import PublicLayout from "@/layouts/public-app-layout";
-import { ReactNode } from "react";
+import PublicLayout from '@/layouts/public-app-layout';
+import { ReactNode } from 'react';
 
 type Event = {
     id: string;
@@ -40,7 +40,7 @@ export default function CustomerEvents({ events, filters }: Props) {
                 city,
                 ...overrides,
             },
-            { preserveState: true, replace: true }
+            { preserveState: true, replace: true },
         );
     };
 
@@ -55,18 +55,18 @@ export default function CustomerEvents({ events, filters }: Props) {
         <>
             <Head title="Browse Events" />
 
-            <div className="max-w-6xl mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-6">Upcoming Events</h1>
+            <div className="mx-auto max-w-6xl px-4 py-8">
+                <h1 className="mb-6 text-3xl font-bold">Upcoming Events</h1>
 
                 {/* Filters */}
-                <div className="flex flex-wrap gap-3 mb-8 bg-gray-50 p-4 rounded-lg">
+                <div className="mb-8 flex flex-wrap gap-3 rounded-lg bg-gray-50 p-4">
                     <input
                         type="text"
                         placeholder="Search events..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && applyFilters()}
-                        className="flex-1 min-w-[200px] border rounded px-3 py-2"
+                        className="min-w-[200px] flex-1 rounded border px-3 py-2"
                     />
 
                     <select
@@ -75,7 +75,7 @@ export default function CustomerEvents({ events, filters }: Props) {
                             setCategory(e.target.value);
                             applyFilters({ category: e.target.value });
                         }}
-                        className="border rounded px-3 py-2"
+                        className="rounded border px-3 py-2"
                     >
                         <option value="">All categories</option>
                         {CATEGORIES.map((c) => (
@@ -91,12 +91,12 @@ export default function CustomerEvents({ events, filters }: Props) {
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && applyFilters()}
-                        className="border rounded px-3 py-2 w-40"
+                        className="w-40 rounded border px-3 py-2"
                     />
 
                     <button
                         onClick={() => applyFilters()}
-                        className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+                        className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800"
                     >
                         Search
                     </button>
@@ -104,7 +104,7 @@ export default function CustomerEvents({ events, filters }: Props) {
                     {(search || category || city) && (
                         <button
                             onClick={clearFilters}
-                            className="text-gray-600 px-4 py-2 hover:underline"
+                            className="px-4 py-2 text-gray-600 hover:underline"
                         >
                             Clear
                         </button>
@@ -113,30 +113,37 @@ export default function CustomerEvents({ events, filters }: Props) {
 
                 {/* Results */}
                 {events.length === 0 ? (
-                    <div className="text-center py-16 text-gray-500">
+                    <div className="py-16 text-center text-gray-500">
                         <p className="text-lg">No events match your filters.</p>
-                        <button onClick={clearFilters} className="mt-2 underline">
+                        <button
+                            onClick={clearFilters}
+                            className="mt-2 underline"
+                        >
                             Clear filters and try again
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {events.map((event) => (
                             <Link
                                 key={event.id}
                                 href={`/events/${event.id}`}
-                                className="block border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                                className="block overflow-hidden rounded-lg border transition-shadow hover:shadow-lg"
                             >
                                 <div className="p-5">
-                                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    <span className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                                         {event.category}
                                     </span>
-                                    <h2 className="text-xl font-semibold mt-1">{event.title}</h2>
-                                    <p className="text-gray-600 mt-1">
+                                    <h2 className="mt-1 text-xl font-semibold">
+                                        {event.title}
+                                    </h2>
+                                    <p className="mt-1 text-gray-600">
                                         {event.venue.name} — {event.venue.city}
                                     </p>
-                                    <p className="text-gray-500 text-sm mt-1">
-                                        {new Date(event.starts_at).toLocaleDateString(undefined, {
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        {new Date(
+                                            event.starts_at,
+                                        ).toLocaleDateString(undefined, {
                                             weekday: 'short',
                                             month: 'short',
                                             day: 'numeric',
@@ -144,7 +151,8 @@ export default function CustomerEvents({ events, filters }: Props) {
                                         })}
                                     </p>
                                     <p className="mt-3 font-semibold">
-                                        From ${Number(event.base_price).toFixed(2)}
+                                        From $
+                                        {Number(event.base_price).toFixed(2)}
                                     </p>
                                 </div>
                             </Link>
@@ -156,4 +164,6 @@ export default function CustomerEvents({ events, filters }: Props) {
     );
 }
 
-CustomerEvents.layout = (page: ReactNode)  => <PublicLayout>{page}</PublicLayout>;
+CustomerEvents.layout = (page: ReactNode) => (
+    <PublicLayout>{page}</PublicLayout>
+);
