@@ -7,8 +7,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Head, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { SquarePen, Trash } from 'lucide-react';
+import { create, edit, destroy } from '@/routes/events';
 
 interface Event {
     id: number;
@@ -31,7 +32,7 @@ interface Props {
 export default function Events({ events }: Props) {
     const handleDelete = (id: number) => {
         if (window.confirm('Are you sure you want to delete this venue?')) {
-            router.delete(`/events/${id}`);
+            destroy(id);
         }
     };
 
@@ -39,11 +40,10 @@ export default function Events({ events }: Props) {
         <>
             <Head title={'Events'} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Button
-                    className={'w-40'}
-                    onClick={() => router.visit('/events/create')}
-                >
-                    Create
+                <Button asChild>
+                    <Link className={'w-40'} href={create()}>
+                        Create
+                    </Link>
                 </Button>
                 <Table>
                     <TableHeader>
@@ -77,20 +77,15 @@ export default function Events({ events }: Props) {
                                 </TableCell>
                                 <TableCell>{event.base_price}</TableCell>
                                 <TableCell>
-                                    <Button
-                                        size={'icon'}
-                                        onClick={() =>
-                                            router.visit(
-                                                `/events/${event.id}/edit`,
-                                            )
-                                        }
-                                    >
-                                        <SquarePen />
+                                    <Button size={'icon'} asChild>
+                                        <Link href={edit(event.id)}>
+                                            <SquarePen />
+                                        </Link>
                                     </Button>
                                     <Button
+                                        onClick={() => handleDelete(event.id)}
                                         size={'icon'}
                                         variant={'destructive'}
-                                        onClick={() => handleDelete(event.id)}
                                     >
                                         <Trash />
                                     </Button>

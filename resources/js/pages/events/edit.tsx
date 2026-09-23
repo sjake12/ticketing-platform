@@ -1,4 +1,4 @@
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
 import {
@@ -11,6 +11,8 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import React, { SubmitEvent } from 'react';
+import { buttonVariants } from '@/components/ui/button';
+import { index as events } from '@/routes/events';
 
 interface Event {
     id: number;
@@ -58,12 +60,12 @@ export default function EditEvent({ event, venues }: PageProps) {
         <>
             <Head title="Edit Event" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Button
-                    className={'w-40'}
-                    onClick={() => router.visit('/events')}
+                <Link
+                    href={events()}
+                    className={buttonVariants({ className: 'w-40' })}
                 >
                     Back to Events
-                </Button>
+                </Link>
                 <form
                     className="flex w-[500px] flex-col gap-4"
                     onSubmit={handleSubmit}
