@@ -1,4 +1,4 @@
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import React, { SubmitEvent } from 'react';
+import { index as events } from '@/routes/events';
 
 interface EventFormData {
     venue_id: number;
@@ -41,7 +42,7 @@ export default function CreateEvent({ venues }: PageProps) {
     const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        post('/events', {
+        post('/admin/events', {
             onSuccess: () => reset(),
         });
     };
@@ -50,14 +51,11 @@ export default function CreateEvent({ venues }: PageProps) {
         <>
             <Head title={'Venues'} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Button
-                    className={'w-40'}
-                    onClick={() => router.visit('/events')}
-                >
-                    Back to Events
+                <Button className={'w-40'} asChild>
+                    <Link href={events()}>Back to Events</Link>
                 </Button>
                 <form
-                    className="flex w-[500px] flex-col gap-4"
+                    className="flex w-125 flex-col gap-4"
                     onSubmit={handleSubmit}
                 >
                     <Field>

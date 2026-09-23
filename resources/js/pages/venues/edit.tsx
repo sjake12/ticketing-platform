@@ -1,8 +1,9 @@
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { VenueFormData } from '@/types';
 import React, { SubmitEvent } from 'react';
+import { index as venues } from '@/routes/venues';
 
 interface Props {
     venue: {
@@ -33,12 +34,12 @@ export default function EditVenue({ venue }: Props) {
             <Head title={'Edit Venue'} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                    <Button
-                        className={'w-40'}
-                        onClick={() => router.visit('/venues')}
+                    <Link
+                        href={venues()}
+                        className={buttonVariants({ className: 'w-40' })}
                     >
                         Back to Venues
-                    </Button>
+                    </Link>
                     <h1>Edit Venue</h1>
                     <form
                         className={'flex w-[500px] flex-col gap-4'}

@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     Table,
     TableBody,
@@ -10,6 +10,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { SquarePen, Trash } from 'lucide-react';
 import { VenuesPageProps } from '@/types';
+import { create, edit, destroy } from '@/routes/venues';
+import { buttonVariants } from '@/components/ui/button';
 
 interface Venues {
     id: number;
@@ -20,7 +22,7 @@ interface Venues {
 export default function Venues({ venues }: VenuesPageProps) {
     const handleDelete = (id: number) => {
         if (window.confirm('Are you sure you want to delete this venue?')) {
-            router.delete(`/venues/${id}`);
+            destroy(id);
         }
     };
 
@@ -28,12 +30,12 @@ export default function Venues({ venues }: VenuesPageProps) {
         <>
             <Head title={'Venues'} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <Button
-                    className={'w-40'}
-                    onClick={() => router.visit('/venues/create')}
+                <Link
+                    href={create()}
+                    className={buttonVariants({ className: 'w-40' })}
                 >
                     Create
-                </Button>
+                </Link>
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -50,16 +52,14 @@ export default function Venues({ venues }: VenuesPageProps) {
                                 <TableCell>{venue.name}</TableCell>
                                 <TableCell>{venue.city}</TableCell>
                                 <TableCell>
-                                    <Button
-                                        size={'icon'}
-                                        onClick={() =>
-                                            router.visit(
-                                                `/venues/${venue.id}/edit`,
-                                            )
-                                        }
+                                    <Link
+                                        href={edit(venue.id)}
+                                        className={buttonVariants({
+                                            size: 'icon',
+                                        })}
                                     >
                                         <SquarePen />
-                                    </Button>
+                                    </Link>
                                     <Button
                                         size={'icon'}
                                         variant={'destructive'}
