@@ -18,20 +18,22 @@ class SeatLockService
     /**
      *  Attempt to lock a seat for a user. Returns true if the lock was
      *  acquired, false if the seat is already locked by someone else.
-     * @throws Throwable
      */
     public function lock(Seat $seat, string $userId): bool
     {
         $key = $this->lockKey($seat->id);
 
         // SET key value NX EX seconds - if not exists(NX)
-        $acquired = Redis::command('set', [
-            $key,
-            $userId,
-            ['NX', 'EX' => self::LOCK_TTL_SECONDS],
-        ]);
-
-        return (bool) $acquired;
+        try {
+            $acquired = Redis::command('set', [
+                $key,
+                $userId,
+                ['NX', 'EX' => self::LOCK_TTL_SECONDS],
+            ]);
+            return (bool) $acquired;
+        } catch (Throwable $e) {
+            return false;
+        }
     }
 
     /**
