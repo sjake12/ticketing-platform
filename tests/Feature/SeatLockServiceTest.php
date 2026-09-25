@@ -2,6 +2,11 @@
 
 use App\Models\Seat;
 use App\Services\SeatLockService;
+use Illuminate\Support\Facades\Redis;
+
+beforeEach(function () {
+    Redis::flushDB();
+});
 
 it('prevents two users from locking the same seat', function () {
     $seat = Seat::factory()->create();
