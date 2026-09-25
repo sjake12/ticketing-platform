@@ -30,6 +30,7 @@ class SeatLockService
                 $userId,
                 ['NX', 'EX' => self::LOCK_TTL_SECONDS],
             ]);
+
             return (bool) $acquired;
         } catch (Throwable $e) {
             return false;
