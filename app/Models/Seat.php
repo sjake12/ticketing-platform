@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $row
  * @property int $number
  * @property string $status
+ * @property string $display_status
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Seat newQuery()
@@ -38,13 +39,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin Eloquent
  */
-#[Fillable(['section', 'row', 'number', 'status'])]
+#[Fillable(['section', 'row', 'number', 'status', 'display_status'])]
 class Seat extends Model
 {
     /** @use HasFactory<SeatFactory> */
     use HasFactory;
 
     protected $table = 'seats';
+    protected $appends = ['display_status'];
 
     /**
      * @return BelongsTo<Event, $this>
