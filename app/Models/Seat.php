@@ -46,7 +46,6 @@ class Seat extends Model
     use HasFactory;
 
     protected $table = 'seats';
-    protected $appends = ['display_status'];
 
     /**
      * @return BelongsTo<Event, $this>
