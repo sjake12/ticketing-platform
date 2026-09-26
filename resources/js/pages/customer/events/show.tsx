@@ -1,13 +1,16 @@
-import { Head, Link } from '@inertiajs/react';
-import { useMemo } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useEffect, useMemo, useState } from 'react';
 import PublicLayout from '@/layouts/public-app-layout';
+
+type SeatStatus = 'available' | 'held_by_you' | 'locked' | 'sold';
 
 type Seat = {
     id: string;
     section: string;
     row: number;
     number: number;
-    status: 'available' | 'locked' | 'sold';
+    status: 'available' | 'sold';
+    display_status?: SeatStatus;
 };
 
 type Event = {
@@ -20,49 +23,106 @@ type Event = {
         name: string;
         city: string;
     };
-    seats: Seat[];
 };
 
 type Props = {
     event: Event;
+    seats: Seat[];
 };
 
-export default function ShowCustomerEvents({ event }: Props) {
-    // Group seats by section, then by row, for rendering the grid
+const LOCK_TTL_SECONDS = 300; // must match SeatLockService::LOCK_TTL_SECONDS
+
+export default function ShowCustomerEvents({ event, seats }: Props) {
+    const { errors } = usePage().props as { errors: Record<string, string> };
+
+    const heldSeat = seats.find((s) => s.display_status === 'held_by_you');
+    const [secondsLeft, setSecondsLeft] = useState(LOCK_TTL_SECONDS);
+
+    // Countdown for the currently held seat. Resets whenever the held seat changes.
+    useEffect(() => {
+        if (!heldSeat) return;
+
+        setSecondsLeft(LOCK_TTL_SECONDS);
+        const interval = setInterval(() => {
+            setSecondsLeft((s) => {
+                if (s <= 1) {
+                    clearInterval(interval);
+                    router.reload({ only: ['seats'] });
+                    return 0;
+                }
+                return s - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [heldSeat?.id]);
+
     const sections = useMemo(() => {
         const bySection: Record<string, Record<number, Seat[]>> = {};
 
-        for (const seat of event.seats) {
+        for (const seat of seats) {
             bySection[seat.section] ??= {};
             bySection[seat.section][seat.row] ??= [];
             bySection[seat.section][seat.row].push(seat);
         }
 
-        // Sort rows and seats within each section for a clean grid
         return Object.entries(bySection).map(([sectionName, rows]) => ({
             name: sectionName,
             rows: Object.entries(rows)
                 .sort(([a], [b]) => Number(a) - Number(b))
-                .map(([rowNumber, seats]) => ({
+                .map(([rowNumber, rowSeats]) => ({
                     row: Number(rowNumber),
-                    seats: seats.sort((a, b) => a.number - b.number),
+                    seats: rowSeats.sort((a, b) => a.number - b.number),
                 })),
         }));
-    }, [event.seats]);
+    }, [seats]);
 
-    const availableCount = event.seats.filter(
-        (s) => s.status === 'available',
-    ).length;
+    const availableCount = seats.filter((s) => s.status === 'available').length;
 
-    const seatClasses = (status: Seat['status']) => {
+    const statusOf = (seat: Seat): SeatStatus => {
+        if (seat.status === 'sold') return 'sold';
+        return seat.display_status ?? 'available';
+    };
+
+    const seatClasses = (status: SeatStatus) => {
         switch (status) {
             case 'available':
                 return 'bg-white border-gray-300 hover:border-black hover:bg-gray-50 cursor-pointer';
+            case 'held_by_you':
+                return 'bg-green-100 border-green-500 cursor-pointer';
             case 'locked':
                 return 'bg-yellow-100 border-yellow-400 cursor-not-allowed opacity-70';
             case 'sold':
                 return 'bg-gray-300 border-gray-300 cursor-not-allowed opacity-50';
         }
+    };
+
+    const handleSeatClick = (seat: Seat) => {
+        const status = statusOf(seat);
+
+        if (status === 'available') {
+            // Releasing any other held seat first isn't handled server-side yet —
+            // for now we only allow one held seat at a time in the UI.
+            if (heldSeat && heldSeat.id !== seat.id) {
+                return;
+            }
+            router.post(`/seats/${seat.id}/lock`, {}, { preserveScroll: true });
+            return;
+        }
+
+        if (status === 'held_by_you') {
+            router.post(
+                `/seats/${seat.id}/release`,
+                {},
+                { preserveScroll: true },
+            );
+        }
+    };
+
+    const formatCountdown = (totalSeconds: number) => {
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
     };
 
     return (
@@ -77,8 +137,7 @@ export default function ShowCustomerEvents({ event }: Props) {
                     ← Back to events
                 </Link>
 
-                {/* Event header */}
-                <div className="mt-4 mb-8">
+                <div className="mt-4 mb-6">
                     <span className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                         {event.category}
                     </span>
@@ -105,11 +164,51 @@ export default function ShowCustomerEvents({ event }: Props) {
                     </p>
                 </div>
 
-                {/* Legend */}
+                {errors?.seat && (
+                    <div className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-2 text-red-700">
+                        {errors.seat}
+                    </div>
+                )}
+
+                {heldSeat && (
+                    <div className="mb-6 flex items-center justify-between rounded-lg border border-green-400 bg-green-50 p-4">
+                        <div>
+                            <p className="font-semibold">
+                                Holding Section {heldSeat.section}, Row{' '}
+                                {heldSeat.row}, Seat {heldSeat.number}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                                Reservation expires in{' '}
+                                {formatCountdown(secondsLeft)}
+                            </p>
+                        </div>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() =>
+                                    router.post(`/seats/${heldSeat.id}/release`)
+                                }
+                                className="rounded border px-4 py-2 hover:bg-gray-50"
+                            >
+                                Release
+                            </button>
+                            <Link
+                                href={`/reservations/${heldSeat.id}/checkout`}
+                                className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800"
+                            >
+                                Proceed to checkout
+                            </Link>
+                        </div>
+                    </div>
+                )}
+
                 <div className="mb-6 flex gap-4 text-sm">
                     <div className="flex items-center gap-2">
                         <span className="h-4 w-4 rounded border border-gray-300 bg-white" />
                         Available
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="h-4 w-4 rounded border border-green-500 bg-green-100" />
+                        Held by you
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="h-4 w-4 rounded border border-yellow-400 bg-yellow-100" />
@@ -121,7 +220,6 @@ export default function ShowCustomerEvents({ event }: Props) {
                     </div>
                 </div>
 
-                {/* Seat map */}
                 <div className="space-y-8">
                     {sections.map((section) => (
                         <div key={section.name}>
@@ -138,22 +236,31 @@ export default function ShowCustomerEvents({ event }: Props) {
                                             Row {row.row}
                                         </span>
                                         <div className="flex gap-1">
-                                            {row.seats.map((seat) => (
-                                                <button
-                                                    key={seat.id}
-                                                    type="button"
-                                                    disabled={
-                                                        seat.status !==
-                                                        'available'
-                                                    }
-                                                    title={`Section ${seat.section}, Row ${seat.row}, Seat ${seat.number}`}
-                                                    className={`flex h-8 w-8 items-center justify-center rounded border text-xs transition-colors ${seatClasses(
-                                                        seat.status,
-                                                    )}`}
-                                                >
-                                                    {seat.number}
-                                                </button>
-                                            ))}
+                                            {row.seats.map((seat) => {
+                                                const status = statusOf(seat);
+                                                const clickable =
+                                                    status === 'available' ||
+                                                    status === 'held_by_you';
+
+                                                return (
+                                                    <button
+                                                        key={seat.id}
+                                                        type="button"
+                                                        disabled={!clickable}
+                                                        onClick={() =>
+                                                            handleSeatClick(
+                                                                seat,
+                                                            )
+                                                        }
+                                                        title={`Section ${seat.section}, Row ${seat.row}, Seat ${seat.number}`}
+                                                        className={`flex h-8 w-8 items-center justify-center rounded border text-xs transition-colors ${seatClasses(
+                                                            status,
+                                                        )}`}
+                                                    >
+                                                        {seat.number}
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 ))}
