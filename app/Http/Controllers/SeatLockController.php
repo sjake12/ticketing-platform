@@ -52,7 +52,7 @@ class SeatLockController extends Controller
         $released = $this->lockService->release($seat, $userId);
 
         if ($released) {
-            broadcast(new SeatReleasedEvent((string) $seat->id, (string) $seat->event_id, $userId))->toOthers();
+            broadcast(new SeatReleasedEvent((string) $seat->id, (string) $seat->event_id))->toOthers();
         }
 
         return back();

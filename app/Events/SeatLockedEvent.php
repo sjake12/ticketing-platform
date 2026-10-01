@@ -29,6 +29,9 @@ class SeatLockedEvent implements ShouldBroadcastNow
         return new Channel("event.{$this->eventId}");
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function broadcastWith(): array
     {
         return [
