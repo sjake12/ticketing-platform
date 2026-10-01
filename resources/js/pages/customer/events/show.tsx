@@ -1,11 +1,12 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import PublicLayout from '@/layouts/public-app-layout';
+import Echo from '@/echo';
 
 type SeatStatus = 'available' | 'held_by_you' | 'locked' | 'sold';
 
 type Seat = {
-    id: string;
+    id: number;
     section: string;
     row: number;
     number: number;
@@ -35,8 +36,44 @@ const LOCK_TTL_SECONDS = 300; // must match SeatLockService::LOCK_TTL_SECONDS
 export default function ShowCustomerEvents({ event, seats }: Props) {
     const { errors } = usePage().props as { errors: Record<string, string> };
 
-    const heldSeat = seats.find((s) => s.display_status === 'held_by_you');
+    const [liveSeats, setLiveSeats] = useState(seats);
     const [secondsLeft, setSecondsLeft] = useState(LOCK_TTL_SECONDS);
+    const heldSeat = liveSeats.find((s) => s.display_status === 'held_by_you');
+
+    useEffect(() => {
+        setLiveSeats(seats);
+    }, [seats]);
+
+    useEffect(() => {
+        const channel = Echo.channel(`event.${event.id}`);
+
+        channel.listen(
+            'SeatLockedEvent',
+            (e: { seatId: string; locked_by_user_id: string }) => {
+                setLiveSeats((current) =>
+                    current.map((seat) =>
+                        String(seat.id) === String(e.seatId)
+                            ? { ...seat, display_status: 'locked' as const }
+                            : seat,
+                    ),
+                );
+            },
+        );
+
+        channel.listen('SeatReleasedEvent', (e: { seatId: string }) => {
+            setLiveSeats((current) =>
+                current.map((seat) =>
+                    String(seat.id) === String(e.seatId)
+                        ? { ...seat, display_status: undefined } // back to plain 'available'
+                        : seat,
+                ),
+            );
+        });
+
+        return () => {
+            Echo.leaveChannel(`event.${event.id}`);
+        };
+    }, [event.id]);
 
     // Countdown for the currently held seat. Resets whenever the held seat changes.
     useEffect(() => {
@@ -60,7 +97,7 @@ export default function ShowCustomerEvents({ event, seats }: Props) {
     const sections = useMemo(() => {
         const bySection: Record<string, Record<number, Seat[]>> = {};
 
-        for (const seat of seats) {
+        for (const seat of liveSeats) {
             bySection[seat.section] ??= {};
             bySection[seat.section][seat.row] ??= [];
             bySection[seat.section][seat.row].push(seat);
@@ -75,9 +112,11 @@ export default function ShowCustomerEvents({ event, seats }: Props) {
                     seats: rowSeats.sort((a, b) => a.number - b.number),
                 })),
         }));
-    }, [seats]);
+    }, [liveSeats]);
 
-    const availableCount = seats.filter((s) => s.status === 'available').length;
+    const availableCount = liveSeats.filter(
+        (s) => s.status === 'available',
+    ).length;
 
     const statusOf = (seat: Seat): SeatStatus => {
         if (seat.status === 'sold') return 'sold';
@@ -103,7 +142,7 @@ export default function ShowCustomerEvents({ event, seats }: Props) {
         if (status === 'available') {
             // Releasing any other held seat first isn't handled server-side yet —
             // for now we only allow one held seat at a time in the UI.
-            if (heldSeat && heldSeat.id !== seat.id) {
+            if (heldSeat && String(heldSeat.id) !== String(seat.id)) {
                 return;
             }
             router.post(`/seats/${seat.id}/lock`, {}, { preserveScroll: true });
