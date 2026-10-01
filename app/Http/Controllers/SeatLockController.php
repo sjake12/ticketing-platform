@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SeatLockedEvent;
+use App\Events\SeatReleasedEvent;
 use App\Models\Seat;
 use App\Services\SeatLockService;
 use Illuminate\Http\JsonResponse;
@@ -34,6 +36,8 @@ class SeatLockController extends Controller
             ]);
         }
 
+        broadcast(new SeatLockedEvent((string) $seat->id, (string) $seat->event_id, $userId))->toOthers();
+
         if ($request->wantsJson()) {
             return response()->json(['status' => 'locked'], 200);
         }
@@ -45,7 +49,11 @@ class SeatLockController extends Controller
     {
         $userId = (string) $request->user()->id;
 
-        $this->lockService->release($seat, $userId);
+        $released = $this->lockService->release($seat, $userId);
+
+        if ($released) {
+            broadcast(new SeatReleasedEvent((string) $seat->id, (string) $seat->event_id, $userId))->toOthers();
+        }
 
         return back();
     }
