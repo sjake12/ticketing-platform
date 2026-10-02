@@ -20,12 +20,4 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
-window.Echo.connector.pusher.connection.bind('connected', () => {
-    console.log('Echo connected to Reverb');
-});
-
-window.Echo.connector.pusher.connection.bind('error', (err: unknown) => {
-    console.error('Echo connection error:', err);
-});
-
 export default window.Echo;
